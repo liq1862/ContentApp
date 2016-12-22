@@ -8,10 +8,12 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ListView;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.Manifest.permission.WRITE_CONTACTS;
@@ -24,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
         int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
 
         if(permission != PackageManager.PERMISSION_GRANTED){
@@ -57,16 +62,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readContacts() {
+        ListView lv = (ListView) findViewById(R.id.listView);
+
         ContentResolver resolver = getContentResolver();
-        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI,null,null,null,null);
+        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI,
+                null,null,null,null);
 
-        while (cursor.moveToNext()){
-            int id = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+        SimpleCursorAdapter scadapter = new SimpleCursorAdapter(this,
+                android.R.layout.simple_list_item_1,
+                cursor,new String[] {ContactsContract.Contacts.DISPLAY_NAME},
+                new int[] {android.R.id.text1},0);
+        lv.setAdapter(scadapter);
 
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
-            Log.d("RECORD",id+"/"+name);
-        }
+//        while (cursor.moveToNext()){
+//            int id = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+//
+//            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+//
+//            Log.d("RECORD",id+"/"+name);
+//        }
     }
 
 
